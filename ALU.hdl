@@ -43,4 +43,36 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
+    // Step 1: Zero x if zx is set
+    Mux16(a=x, b=false, sel=zx, out=x1);
+    
+    // Step 2: Negate x if nx is set
+    Not16(in=x1, out=notX);
+    Mux16(a=x1, b=notX, sel=nx, out=x2);
+
+    // Step 3: Zero y if zy is set
+    Mux16(a=y, b=false, sel=zy, out=y1);
+    
+    // Step 4: Negate y if ny is set
+    Not16(in=y1, out=notY);
+    Mux16(a=y1, b=notY, sel=ny, out=y2);
+
+    // Step 5: Compute either x + y or x & y depending on f
+    Add16(a=x2, b=y2, out=xySum);
+    And16(a=x2, b=y2, out=xyAnd);
+    Mux16(a=xyAnd, b=xySum, sel=f, out=out1);
+
+    // Step 6: Negate the output if no is set
+    Not16(in=out1, out=notOut);
+    Mux16(a=out1, b=notOut, sel=no, out=out);
+
+    // Step 7: Determine if the output is zero
+    Or8Way(in=out[0..7], out=zrLower);
+    Or8Way(in=out[8..15], out=zrUpper);
+    Or(a=zrLower, b=zrUpper, out=notZr);
+    Not(in=notZr, out=zr);  // zr = 1 if out == 0
+
+    // Step 8: Determine if the output is negative
+    // The most significant bit of the output indicates the sign
+    And(a=out[15], b=true, out=ng);  // ng = 1 if out < 0
 }
