@@ -43,48 +43,30 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
-    // Step 1: Zero x if zx is set
-    Mux16(a=x, b=false, sel=zx, out=x1);
-    
-    // Step 2: Negate x if nx is set
-    Not16(in=x1, out=notX);
-    Mux16(a=x1, b=notX, sel=nx, out=x2);
+      Mux16(a=x, sel=zx, out=x1);
+      Not16(in=x1, out=negatedX);
+      Mux16(a=x1, b=negatedX, sel=nx, out=x2);
 
-    // Step 3: Zero y if zy is set
-    Mux16(a=y, b=false, sel=zy, out=y1);
-    
-    // Step 4: Negate y if ny is set
-    Not16(in=y1, out=notY);
-    Mux16(a=y1, b=notY, sel=ny, out=y2);
+      // y zero / negate
+      Mux16(a=y, sel=zy, out=y1);
+      Not16(in=y1, out=negatedY);
+      Mux16(a=y1, b=negatedY, sel=ny, out=y2);
 
-    // Step 5: Compute either x + y or x & y depending on f
-    Add16(a=x2, b=y2, out=xySum);
-    And16(a=x2, b=y2, out=xyAnd);
-    Mux16(a=xyAnd, b=xySum, sel=f, out=out1);
+      // x + y OR x & y
+      Add16(a=x2, b=y2, out=added);
+      And16(a=x2, b=y2, out=xyAnd);
+      Mux16(a=xyAnd, b=added, sel=f, out=result);
 
-    // Step 6: Negate the output if no is set
-    Not16(in=out1, out=notOut);
-    Mux16(a=out1, b=notOut, sel=no, out=out);
+      // negate the output?
+      Not16(in=result, out=negatedResult);
+      Mux16(a=result, b=negatedResult, sel=no, out=out, out[15]=firstOut, out[0..7]=finalLeft, out[8..15]=finalRight);
 
-    // Step 7: Determine if the output is zero
-    Or(a=out[0], b=out[1], out=or1);
-    Or(a=or1, b=out[2], out=or2);
-    Or(a=or2, b=out[3], out=or3);
-    Or(a=or3, b=out[4], out=or4);
-    Or(a=or4, b=out[5], out=or5);
-    Or(a=or5, b=out[6], out=or6);
-    Or(a=or6, b=out[7], out=or7);
-    Or(a=or7, b=out[8], out=or8);
-    Or(a=or8, b=out[9], out=or9);
-    Or(a=or9, b=out[10], out=or10);
-    Or(a=or10, b=out[11], out=or11);
-    Or(a=or11, b=out[12], out=or12);
-    Or(a=or12, b=out[13], out=or13);
-    Or(a=or13, b=out[14], out=or14);
-    Or(a=or14, b=out[15], out=or15);
-    Not(in=or15, out=zr);  // zr = 1 if out == 0
+      // output == 0 (zr)
+      Or8Way(in=finalLeft, out=zrl);
+      Or8Way(in=finalRight, out=zrr);
+      Or(a=zrl, b=zrr, out=nzr);
+      Not(in=nzr, out=zr);
 
-    // Step 8: Determine if the output is negative
-    // The most significant bit of the output indicates the sign
-    And(a=out[15], b=true, out=ng);  // ng = 1 if out < 0
+      // output < 0 (ng)
+      And(a=firstOut, b=true, out=ng);
 }
