@@ -69,8 +69,8 @@ CHIP ALU {
     // Step 7: Determine if the output is zero
     Or8Way(in=out[0..7], out=zrLower);
     Or8Way(in=out[8..15], out=zrUpper);
-    Or(a=zrLower, b=zrUpper, out=notZr);
-    Not(in=notZr, out=zr);  // zr = 1 if out == 0
+    Or(a=zrLower, b=zrUpper, out=zrFinal);
+    Not(in=zrFinal, out=zr);  // zr = 1 if out == 0
 
     // Step 8: Determine if the output is negative
     // The most significant bit of the output indicates the sign
