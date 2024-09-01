@@ -26,42 +26,18 @@ CHIP Decode {
 
 PARTS:
     // Put your code here:
-    And(a=true, b=in[15], out=type);
-
-    // If A-instruction, extract value (bits 0-14)
-    Not(in=in[15], out=ni);
-    And(a=ni, b=in[0], out=value[0]);
-    And(a=ni, b=in[1], out=value[1]);
-    And(a=ni, b=in[2], out=value[2]);
-    And(a=ni, b=in[3], out=value[3]);
-    And(a=ni, b=in[4], out=value[4]);
-    And(a=ni, b=in[5], out=value[5]);
-    And(a=ni, b=in[6], out=value[6]);
-    And(a=ni, b=in[7], out=value[7]);
-    And(a=ni, b=in[8], out=value[8]);
-    And(a=ni, b=in[9], out=value[9]);
-    And(a=ni, b=in[10], out=value[10]);
-    And(a=ni, b=in[11], out=value[11]);
-    And(a=ni, b=in[12], out=value[12]);
-    And(a=ni, b=in[13], out=value[13]);
-    And(a=ni, b=in[14], out=value[14]);
-
-    // If C-instruction, extract control bits (a, c1-c6, d1-d3, j1-j3)
-    And(a=in[15], b=in[12], out=a);    // a bit
-
-    And(a=in[15], b=in[11], out=c1);   // zx
-    And(a=in[15], b=in[10], out=c2);   // nx
-    And(a=in[15], b=in[9], out=c3);    // zy
-    And(a=in[15], b=in[8], out=c4);    // ny
-    And(a=in[15], b=in[7], out=c5);    // f
-    And(a=in[15], b=in[6], out=c6);    // no
-
-    And(a=in[15], b=in[5], out=d1);    // da
-    And(a=in[15], b=in[4], out=d2);    // dd
-    And(a=in[15], b=in[3], out=d3);    // dm
-
-    And(a=in[15], b=in[2], out=j1);    // jl
-    And(a=in[15], b=in[1], out=j2);    // je
-    And(a=in[15], b=in[0], out=j3);    // jg
-
+    And(a=in[15], b=true, out=i, out=isel);
+    Mux(a=false, b=in[12], sel=isel, out=a);
+    Mux(a=false, b=in[11], sel=isel, out=c1);
+    Mux(a=false, b=in[10], sel=isel, out=c2);
+    Mux(a=false, b=in[9], sel=isel, out=c3);
+    Mux(a=false, b=in[8], sel=isel, out=c4);
+    Mux(a=false, b=in[7], sel=isel, out=c5);
+    Mux(a=false, b=in[6], sel=isel, out=c6);
+    Mux(a=true, b=in[5], sel=out1, out=d1);
+    Mux(a=false, b=in[4], sel=isel, out=d2);
+    Mux(a=false, b=in[3], sel=isel, out=d3);
+    Mux(a=false, b=in[2], sel=isel, out=j1);
+    Mux(a=false, b=in[1], sel=isel, out=j2);
+    Mux(a=false, b=in[0], sel=isel, out=j3);
 }
