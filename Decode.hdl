@@ -27,20 +27,24 @@ CHIP Decode {
 PARTS:
     // Put your code here:
     // Determine the instruction type
-    And(a=in[15], b=true, out=type, out=isel);
+    And(a=in[15], b=true, out=type);
 
-    // Decode the ALU A/M, control bits, destination bits, and jump bits
-    Mux(a=false, b=in[12], sel=isel, out=a);
-    Mux(a=false, b=in[11], sel=isel, out=c1);
-    Mux(a=false, b=in[10], sel=isel, out=c2);
-    Mux(a=false, b=in[9], sel=isel, out=c3);
-    Mux(a=false, b=in[8], sel=isel, out=c4);
-    Mux(a=false, b=in[7], sel=isel, out=c5);
-    Mux(a=false, b=in[6], sel=isel, out=c6);
-    Mux(a=false, b=in[5], sel=isel, out=d1);
-    Mux(a=false, b=in[4], sel=isel, out=d2);
-    Mux(a=false, b=in[3], sel=isel, out=d3);
-    Mux(a=false, b=in[2], sel=isel, out=j1);
-    Mux(a=false, b=in[1], sel=isel, out=j2);
-    Mux(a=false, b=in[0], sel=isel, out=j3);
+    // For C-instruction (type = 1), pass relevant bits from the instruction
+    Mux(a=false, b=in[12], sel=type, out=a);
+    Mux(a=false, b=in[11], sel=type, out=c1);
+    Mux(a=false, b=in[10], sel=type, out=c2);
+    Mux(a=false, b=in[9], sel=type, out=c3);
+    Mux(a=false, b=in[8], sel=type, out=c4);
+    Mux(a=false, b=in[7], sel=type, out=c5);
+    Mux(a=false, b=in[6], sel=type, out=c6);
+    Mux(a=false, b=in[5], sel=type, out=d1);
+    Mux(a=false, b=in[4], sel=type, out=d2);
+    Mux(a=false, b=in[3], sel=type, out=d3);
+    Mux(a=false, b=in[2], sel=type, out=j1);
+    Mux(a=false, b=in[1], sel=type, out=j2);
+    Mux(a=false, b=in[0], sel=type, out=j3);
+
+    // For A-instruction (type = 0), set d1 = 1 and all other outputs to 0
+    Not(in=type, out=notType);
+    And(a=notType, b=true, out=d1);  // d1 is 1 for A-instruction
 }
