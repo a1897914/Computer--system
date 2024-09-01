@@ -28,4 +28,58 @@ CHIP Memory {
 
     PARTS:
     // Put your code here:
+    RAM16K (
+        in=in, 
+        load=ramLoad, 
+        address=address[14..0], 
+        out=ramOut
+    );
+
+    // Define the screen memory map (8K)
+    Screen (
+        in=in, 
+        load=screenLoad, 
+        address=address[12..0], 
+        out=screenOut
+    );
+
+    // Define the keyboard memory map (1 word)
+    Keyboard (
+        out=keyboardOut
+    );
+
+    // Logic for determining which memory segment to use
+    Mux4Way16 (
+        a=ramOut, 
+        b=screenOut, 
+        c=keyboardOut, 
+        d=false, 
+        sel=address[14..13], 
+        out=out
+    );
+
+    // Determine the load signals for RAM and Screen
+    And16 (
+        a=load, 
+        b=notAddress14, 
+        out=ramLoad
+    );
+    
+    And16 (
+        a=load, 
+        b=address[14], 
+        c=notAddress13, 
+        out=screenLoad
+    );
+    
+    // Extract and invert the relevant bits of the address
+    Not (
+        in=address[14], 
+        out=notAddress14
+    );
+    
+    Not (
+        in=address[13], 
+        out=notAddress13
+    );
 }
