@@ -26,9 +26,11 @@ CHIP Decode {
 
 PARTS:
     // Put your code here:
-    Or8Way(in[8..15], out=type);
+    // Instruction type: A-instruction if in[15] = 0, C-instruction if in[15] = 1
+    // `type` is simply the MSB (Most Significant Bit) of the instruction
+    Or8Way(in=in[15], out=type);
 
-    // ALU control and destination wires (for C-instructions)
+    // Decode ALU control bits (c1-c6) and ALU A/M bit (a)
     And(a=type, b=in[12], out=a);
     And(a=type, b=in[11], out=c1);
     And(a=type, b=in[10], out=c2);
@@ -36,14 +38,18 @@ PARTS:
     And(a=type, b=in[8], out=c4);
     And(a=type, b=in[7], out=c5);
     And(a=type, b=in[6], out=c6);
+
+    // Decode destination bits (d1-d3)
     And(a=type, b=in[5], out=d1);
     And(a=type, b=in[4], out=d2);
     And(a=type, b=in[3], out=d3);
+
+    // Decode jump bits (j1-j3)
     And(a=type, b=in[2], out=j1);
     And(a=type, b=in[1], out=j2);
     And(a=type, b=in[0], out=j3);
 
-    // Handle A-instruction
+    // Handle A-instruction outputs (only d1 should be 1, everything else 0)
     Not(in=type, out=notType);
     And(a=notType, b=true, out=d1); // For A-instruction, d1 = 1
     And(a=notType, b=false, out=a); // For A-instruction, a = 0
@@ -58,4 +64,7 @@ PARTS:
     And(a=notType, b=false, out=j1);
     And(a=notType, b=false, out=j2);
     And(a=notType, b=false, out=j3);
+
+    // Integrating Jump Chip
+    Jump(j1=j1, j2=j2, j3=j3, zr=zr, ng=ng, jump=jump);
 }
