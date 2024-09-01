@@ -26,7 +26,9 @@ CHIP Decode {
 
 PARTS:
     // Put your code here:
-    And(a=in[15], b=true, out=type);
+    Or(a=in[15], b=false, out=type);
+
+    // ALU A/M selection (a) and ALU control bits (c1-c6)
     Mux(a=false, b=in[12], sel=type, out=a);
     Mux(a=false, b=in[11], sel=type, out=c1);
     Mux(a=false, b=in[10], sel=type, out=c2);
@@ -34,9 +36,13 @@ PARTS:
     Mux(a=false, b=in[8], sel=type, out=c4);
     Mux(a=false, b=in[7], sel=type, out=c5);
     Mux(a=false, b=in[6], sel=type, out=c6);
+
+    // Destination control bits (d1-d3)
     Mux(a=false, b=in[5], sel=type, out=d1);
     Mux(a=false, b=in[4], sel=type, out=d2);
     Mux(a=false, b=in[3], sel=type, out=d3);
+
+    // Jump control bits (j1-j3)
     Mux(a=false, b=in[2], sel=type, out=j1);
     Mux(a=false, b=in[1], sel=type, out=j2);
     Mux(a=false, b=in[0], sel=type, out=j3);
