@@ -28,13 +28,17 @@ CHIP Jump {
 
 PARTS:
     // Put your code here:
-    Not(in=zr, out=zr_not);
-    Not(in=ng, out=ng_not);
-    And(a=zr_not, b=ng_not, out=pos);
+    Not(in=zr, out=notZr);
+    Not(in=ng, out=notNg);
+    And(a=notZr, b=notNg, out=pos);
 
-    // Determine if a jump should be performed for each condition
+    // Jump if ALU output is negative
     And(a=j1, b=ng, out=jumpIfNeg);
+
+    // Jump if ALU output is zero
     And(a=j2, b=zr, out=jumpIfZero);
+
+    // Jump if ALU output is positive
     And(a=j3, b=pos, out=jumpIfPos);
 
     // Combine all jump conditions
