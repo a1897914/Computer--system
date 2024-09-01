@@ -27,59 +27,21 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
-    RAM16K (
-        in=in, 
-        load=ramLoad, 
-        address=address[14..0], 
-        out=ramOut
-    );
+    // Split the load signal based on the high bits of the address
+    DMux4Way(in=load, sel=address[14..13], a=loadram1, b=loadram2, c=loadscreen, d=loadkbd);
 
-    // Define the screen memory map (8K)
-    Screen (
-        in=in, 
-        load=screenLoad, 
-        address=address[12..0], 
-        out=screenOut
-    );
+    // Combine load signals for RAM
+    Or(a=loadram1, b=loadram2, out=loadram);
 
-    // Define the keyboard memory map (1 word)
-    Keyboard (
-        out=keyboardOut
-    );
+    // RAM16K for the first 16K words
+    RAM16K(in=in, load=loadram, address=address[0..13], out=ramout);
 
-    // Logic for determining which memory segment to use
-    Mux4Way16 (
-        a=ramOut, 
-        b=screenOut, 
-        c=keyboardOut, 
-        d=false, 
-        sel=address[14..13], 
-        out=out
-    );
+    // Screen memory map for the screen addresses (8K)
+    Screen(in=in, load=loadscreen, address=address[0..12], out=scrout);
 
-    // Determine the load signals for RAM and Screen
-    And16 (
-        a=load, 
-        b=notAddress14, 
-        out=ramLoad
-    );
-    
-    And16 (
-        a=load, 
-        b=address[14], 
-        c=notAddress13, 
-        out=screenLoad
-    );
-    
-    // Extract and invert the relevant bits of the address
-    Not (
-        in=address[14], 
-        out=notAddress14
-    );
-    
-    Not (
-        in=address[13], 
-        out=notAddress13
-    );
+    // Keyboard memory map for the keyboard address
+    Keyboard(out=kbout);
+
+    // Output multiplexer to select the correct memory output
+    Mux4Way16(a=ramout, b=ramout, c=scrout, d=kbout, sel=address[14..13], out=out);
 }
