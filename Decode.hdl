@@ -27,7 +27,7 @@ CHIP Decode {
 PARTS:
     // Put your code here:
     // Determine the instruction type
-    And(a=in[15], b=true, out=i, out=isel);
+    And(a=in[15], b=true, out=type, out=isel);
 
     // Decode the ALU A/M, control bits, destination bits, and jump bits
     Mux(a=false, b=in[12], sel=isel, out=a);
