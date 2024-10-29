@@ -2,11 +2,11 @@
 #include "CompilerParser.h"
 #include "Token.h"
 #include <iostream>
-#include <vector>
+#include <vector> // Changed back to vector
 
 int main() {
     // Example usage of CompilerParser
-    std::vector<Token*> tokens = {
+    std::vector<Token*> tokens = { // Changed back to vector
         new Token("keyword", "class"),
         new Token("identifier", "MyClass"),
         new Token("symbol", "{"),
