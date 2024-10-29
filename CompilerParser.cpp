@@ -4,7 +4,7 @@
 CompilerParser::CompilerParser(const std::vector<Token*>& tokens) : tokens(tokens), tokenIndex(0) {}
 
 ParseTree* CompilerParser::compileClass() {
-    ParseTree* classTree = new ParseTree("class");
+    ParseTree* classTree = new ParseTree("class", "");
     if (tokenIndex < tokens.size() && tokens[tokenIndex]->getType() == "keyword" && tokens[tokenIndex]->getValue() == "class") {
         classTree->addChild(tokens[tokenIndex++]);
         if (tokenIndex < tokens.size() && tokens[tokenIndex]->getType() == "identifier") {
@@ -32,7 +32,7 @@ ParseTree* CompilerParser::compileClass() {
 }
 
 ParseTree* CompilerParser::compileClassVarDec() {
-    ParseTree* varDecTree = new ParseTree("classVarDec");
+    ParseTree* varDecTree = new ParseTree("classVarDec", "");
     if (tokenIndex < tokens.size() && (tokens[tokenIndex]->getValue() == "static" || tokens[tokenIndex]->getValue() == "field")) {
         varDecTree->addChild(tokens[tokenIndex++]);
         if (tokenIndex < tokens.size() && (tokens[tokenIndex]->getType() == "keyword" || tokens[tokenIndex]->getType() == "identifier")) {
