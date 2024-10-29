@@ -61,3 +61,30 @@ ParseTree* CompilerParser::compileClassVarDec() {
     }
     return varDecTree;
 }
+
+ParseTree* CompilerParser::compileReturn() {
+    ParseTree* returnTree = new ParseTree("returnStatement", "");
+    if (tokenIndex < tokens.size() && tokens[tokenIndex]->getType() == "keyword" && tokens[tokenIndex]->getValue() == "return") {
+        returnTree->addChild(tokens[tokenIndex++]);
+        if (tokenIndex < tokens.size() && tokens[tokenIndex]->getValue() != ";") {
+            returnTree->addChild(compileExpression());
+        }
+        if (tokenIndex < tokens.size() && tokens[tokenIndex]->getValue() == ";") {
+            returnTree->addChild(tokens[tokenIndex++]);
+        } else {
+            throw std::runtime_error("Expected ';' after return statement");
+        }
+    } else {
+        throw std::runtime_error("Expected 'return' keyword");
+    }
+    return returnTree;
+}
+
+ParseTree* CompilerParser::compileExpression() {
+    // Placeholder for actual expression compilation logic
+    ParseTree* expressionTree = new ParseTree("expression", "");
+    if (tokenIndex < tokens.size()) {
+        expressionTree->addChild(tokens[tokenIndex++]);
+    }
+    return expressionTree;
+}

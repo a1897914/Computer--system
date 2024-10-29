@@ -11,6 +11,8 @@ public:
     CompilerParser(const std::vector<Token*>& tokens);
     ParseTree* compileClass();
     ParseTree* compileClassVarDec();
+    ParseTree* compileReturn(); 
+    ParseTree* compileExpression(); 
 
 private:
     std::vector<Token*> tokens;
